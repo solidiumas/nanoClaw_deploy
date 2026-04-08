@@ -1,12 +1,11 @@
-name: Build and Publish Docker Image
+name: Build and Publish Docker Images
 
 on:
   push:
-    branches: ['main'] # Bygger hver gang du pusher til main
+    branches: ['main']
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -26,9 +25,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      # Bygg hoved-appen
+      - name: Build and push NanoClaw App
+        uses: docker/build-push-action@v6 # Oppdatert versjon
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ github.repository_owner }}/nanoclaw-app:latest
+
+      # Bygg agenten (hvis den ligger i /container mappen)
+      - name: Build and push NanoClaw Agent
+        uses: docker/build-push-action@v6
+        with:
+          context: ./container # Peker direkte på mappen med agent-koden
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/nanoclaw-agent:latest
