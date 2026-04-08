@@ -2,14 +2,16 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Vi kopierer alt først for å være helt sikre på at filene er der
+# Kopier avhengigheter
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Kopier resten av koden (server.js osv)
 COPY . .
 
-# Sjekker om filen faktisk finnes før vi kjører npm install
-RUN if [ ! -f "package.json" ]; then echo "FEIL: package.json ikke funnet i build context!"; exit 1; fi
-
-RUN npm install --omit=dev
+# Sjekk at server.js faktisk ble med
+RUN ls -l /app
 
 EXPOSE 80
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
