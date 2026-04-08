@@ -1,18 +1,43 @@
 #!/bin/bash
 
-echo "Installing NanoClaw..."
+set -e
 
+echo "🚀 Installing NanoClaw..."
+
+# Update system
 apt update -y
-apt install -y docker.io docker-compose git
+apt upgrade -y
 
+# Install dependencies
+apt install -y docker.io docker-compose git curl
+
+# Start docker
 systemctl start docker
 systemctl enable docker
 
-git clone https://github.com/YOUR_REPO/nanoclaw-deploy.git
+# Fix permissions
+usermod -aG docker $USER
+
+# Clone repo
+cd /root
+git clone https://github.com/YOUR_USERNAME/nanoclaw-deploy.git
 cd nanoclaw-deploy
 
+# Setup env
 cp .env.example .env
+echo "👉 Edit your .env file:"
+echo "nano .env"
+sleep 5
 
-docker compose up -d --build
+# Build agent container manually (CRITICAL STEP)
+cd /root
+git clone https://github.com/qwibitai/nanoclaw.git || true
+cd nanoclaw/container
+docker build -t nanoclaw-agent:latest .
 
-echo "Done. NanoClaw running on port 3000"
+# Start services
+cd /root/nanoclaw-deploy
+docker-compose up -d --build
+
+echo "✅ NanoClaw installed!"
+echo "👉 Access: http://YOUR_SERVER_IP:3000"
