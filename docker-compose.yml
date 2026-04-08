@@ -2,19 +2,15 @@ version: "3.9"
 
 services:
   nanoclaw:
-    build: .
+    image: node:20
     container_name: nanoclaw
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
+    working_dir: /app
     volumes:
-      - ./data:/app/data
+      - /root/nanoclaw:/app
       - /var/run/docker.sock:/var/run/docker.sock
     env_file:
       - .env
     command: sh -c "npm install && npm start"
-
-  redis:
-    image: redis:7
-    container_name: nanoclaw-redis
+    ports:
+      - "3000:3000"
     restart: unless-stopped
