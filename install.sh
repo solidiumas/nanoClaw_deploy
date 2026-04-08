@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # --- CHECK KERNEL ---
-REQUIRED_KERNEL="6.8.0-107"
 CURRENT_KERNEL=$(uname -r)
 
 echo "🧠 Kernel check: $CURRENT_KERNEL"
 
-if [[ "$CURRENT_KERNEL" != *"107"* ]]; then
-  echo "⚠️ Kernel outdated. Reboot required."
-  echo "👉 Run: reboot"
-  exit 1
+if [[ "$CURRENT_KERNEL" != *"6.8.0-107"* ]]; then
+  echo "⚠️ Kernel outdated."
+  echo "🔁 Rebooting automatically..."
+  sleep 3
+  reboot
+  exit 0
 fi
 
 set -e
